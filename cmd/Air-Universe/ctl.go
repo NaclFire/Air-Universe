@@ -3,7 +3,7 @@ package main
 import (
 	"errors"
 	"github.com/crossfw/Air-Universe/pkg/SSPanelAPI"
-	v2rayApi "github.com/crossfw/Air-Universe/pkg/V2RayAPI"
+	"github.com/crossfw/Air-Universe/pkg/V2boardAPI"
 	"github.com/crossfw/Air-Universe/pkg/XrayAPI"
 	"github.com/crossfw/Air-Universe/pkg/structures"
 	log "github.com/sirupsen/logrus"
@@ -12,20 +12,30 @@ import (
 func checkCfg() (err error) {
 	switch baseCfg.Panel.Type {
 	case "sspanel":
-		return
+		break
+	case "v2board":
+		break
 	default:
 		err = errors.New("unsupported panel type")
+		return
 	}
 
 	switch baseCfg.Proxy.Type {
 	case "v2ray":
-		return
+		break
+	case "xray":
+		break
 	default:
 		err = errors.New("unsupported proxy type")
+		return
 	}
 
 	if len(baseCfg.Panel.NodeIDs) != len(baseCfg.Proxy.InTags) {
 		err = errors.New("node_ids length isn't equal to in_tags length")
+	}
+
+	if len(baseCfg.Panel.NodeIDs) != len(baseCfg.Panel.NodesType) && baseCfg.Panel.Type == "v2board" {
+		err = errors.New("node_ids length isn't equal to nodes_type length")
 	}
 
 	return
@@ -33,17 +43,6 @@ func checkCfg() (err error) {
 
 func initProxyCore() (apiClient structures.ProxyCommand, err error) {
 	switch baseCfg.Proxy.Type {
-	case "v2ray":
-		apiClient = new(v2rayApi.V2rayController)
-		for {
-			err = apiClient.Init(baseCfg)
-			if err != nil {
-				log.Error(err)
-			} else {
-				break
-			}
-		}
-		return
 	case "xray":
 		apiClient = new(XrayAPI.XrayController)
 		for {
@@ -65,6 +64,13 @@ func initPanel(idIndex uint32) (node structures.PanelCommand, err error) {
 	switch baseCfg.Panel.Type {
 	case "sspanel":
 		node = new(SSPanelAPI.SspController)
+		err = node.Init(baseCfg, idIndex)
+		if err != nil {
+			log.Error(err)
+		}
+		return
+	case "v2board":
+		node = new(V2boardAPI.V2bController)
 		err = node.Init(baseCfg, idIndex)
 		if err != nil {
 			log.Error(err)

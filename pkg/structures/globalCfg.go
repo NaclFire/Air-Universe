@@ -8,22 +8,28 @@ type BaseConfig struct {
 }
 type Log struct {
 	LogLevel string `json:"log_level"`
+	Access   string `json:"access"`
 }
 type Panel struct {
-	Type    string   `json:"type"`
-	URL     string   `json:"url"`
-	Key     string   `json:"key"`
-	NodeIDs []uint32 `json:"node_ids"`
+	Type               string   `json:"type"`
+	URL                string   `json:"url"`
+	Key                string   `json:"key"`
+	NodeIDs            []uint32 `json:"node_ids"`
+	NodesType          []string `json:"nodes_type"`
+	NodesProxyProtocol []bool   `json:"nodes_proxy_protocol"`
 }
 type Proxy struct {
-	Type         string   `json:"type"`
-	AlertID      uint32   `json:"alert_id"`
-	AutoGenerate bool     `json:"auto_generate"`
-	InTags       []string `json:"in_tags"`
-	APIAddress   string   `json:"api_address"`
-	APIPort      uint32   `json:"api_port"`
-	LogPath      string   `json:"log_path"`
-	Cert         Cert     `json:"cert"`
+	Type            string    `json:"type"`
+	AlterID         uint32    `json:"alter_id"`
+	AutoGenerate    bool      `json:"auto_generate"`
+	InTags          []string  `json:"in_tags"`
+	APIAddress      string    `json:"api_address"`
+	APIPort         uint32    `json:"api_port"`
+	ConfigPath      string    `json:"config_path"`
+	LogPath         string    `json:"log_path"`
+	ForceCloseTLS   bool      `json:"force_close_tls"`
+	Cert            Cert      `json:"cert"`
+	SpeedLimitLevel []float32 `json:"speed_limit_level"`
 }
 type Sync struct {
 	Interval       uint32 `json:"interval"`
